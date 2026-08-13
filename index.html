@@ -11,22 +11,30 @@
 
 <title>Lector QR - Bienes</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script
+  src="https://unpkg.com/html5-qrcode">
+</script>
+
 
 <style>
 
 * {
-  box-sizing: border-box;
+
+  box-sizing:border-box;
+
 }
 
 body {
 
-  margin: 0;
-  padding: 15px;
+  margin:0;
 
-  min-height: 100vh;
+  padding:15px;
 
-  font-family: Arial, sans-serif;
+  min-height:100vh;
+
+  font-family:
+    Arial,
+    sans-serif;
 
   background:
     linear-gradient(
@@ -39,205 +47,183 @@ body {
 
 .contenedor {
 
-  max-width: 500px;
+  max-width:500px;
 
-  margin: 0 auto;
+  margin:0 auto;
 
-  background: white;
+  background:white;
 
-  border-radius: 15px;
+  border-radius:15px;
 
-  overflow: hidden;
+  overflow:hidden;
 
   box-shadow:
     0 5px 25px
-    rgba(0,0,0,.20);
+    rgba(0,0,0,.2);
 
 }
 
 .encabezado {
 
-  background: #4CAF50;
+  background:#4CAF50;
 
-  color: white;
+  color:white;
 
-  text-align: center;
+  text-align:center;
 
-  padding: 22px 15px;
+  padding:22px 15px;
 
 }
 
 .encabezado h1 {
 
-  margin: 0 0 5px;
+  margin:0 0 5px;
 
-  font-size: 23px;
+  font-size:23px;
 
 }
 
 .encabezado p {
 
-  margin: 0;
+  margin:0;
 
-  font-size: 14px;
+  font-size:14px;
 
 }
 
 .contenido {
 
-  padding: 20px;
+  padding:20px;
 
 }
 
 .estado {
 
-  text-align: center;
+  text-align:center;
 
-  padding: 15px;
+  padding:12px;
 
-  margin-bottom: 15px;
+  margin-bottom:15px;
 
-  border-radius: 10px;
+  border-radius:10px;
 
-  background: #f1f3f5;
+  background:#f1f3f5;
 
-  color: #555;
+  color:#555;
 
-  font-weight: bold;
+  font-weight:bold;
 
 }
 
 #reader {
 
-  width: 100%;
+  width:100%;
 
-  max-width: 400px;
+  max-width:400px;
 
-  margin: 0 auto 20px;
+  margin:0 auto 20px;
 
-  display: none;
+  display:none;
 
-  border-radius: 12px;
+  border-radius:12px;
 
-  overflow: hidden;
+  overflow:hidden;
 
-  background: #000;
+  background:#000;
 
 }
 
 #reader video {
 
-  width: 100% !important;
+  width:100% !important;
 
-  height: auto !important;
+  height:auto !important;
 
 }
 
 button {
 
-  width: 100%;
+  width:100%;
 
-  padding: 15px;
+  padding:15px;
 
-  margin-bottom: 10px;
+  margin-bottom:10px;
 
-  border: none;
+  border:none;
 
-  border-radius: 10px;
+  border-radius:10px;
 
-  font-size: 16px;
+  font-size:16px;
 
-  font-weight: bold;
+  font-weight:bold;
 
-  cursor: pointer;
+  cursor:pointer;
 
 }
 
 #btn-camara {
 
-  background: #4CAF50;
+  background:#4CAF50;
 
-  color: white;
+  color:white;
 
 }
 
 #btn-detener {
 
-  background: #dc3545;
+  background:#dc3545;
 
-  color: white;
+  color:white;
 
-  display: none;
-
-}
-
-#btn-ir {
-
-  background: #2196F3;
-
-  color: white;
-
-  display: none;
-
-}
-
-#btn-nuevo {
-
-  background: #6c757d;
-
-  color: white;
-
-  display: none;
+  display:none;
 
 }
 
 #resultado {
 
-  display: none;
+  display:none;
 
-  margin-top: 15px;
+  margin-top:15px;
 
-  margin-bottom: 15px;
+  padding:15px;
 
-  padding: 15px;
+  border-radius:10px;
 
-  border-radius: 10px;
+  text-align:center;
 
-  text-align: center;
+  background:#d4edda;
 
-  background: #d4edda;
+  color:#155724;
 
-  color: #155724;
+  font-weight:bold;
 
-  font-weight: bold;
-
-  word-break: break-word;
+  word-break:break-word;
 
 }
 
 .instrucciones {
 
-  margin-top: 15px;
+  margin-top:15px;
 
-  padding: 12px;
+  padding:12px;
 
-  border-radius: 10px;
+  border-radius:10px;
 
-  background: #e3f2fd;
+  background:#e3f2fd;
 
-  color: #1565c0;
+  color:#1565c0;
 
-  font-size: 13px;
+  font-size:13px;
 
-  text-align: center;
+  text-align:center;
 
 }
 
 .error {
 
-  background: #f8d7da;
+  background:#f8d7da;
 
-  color: #721c24;
+  color:#721c24;
 
 }
 
@@ -284,7 +270,7 @@ Control de Bienes
   id="btn-camara"
   onclick="iniciarCamara()">
 
-📷 ACTIVAR CÁMARA
+📷 Activar cámara
 
 </button>
 
@@ -293,7 +279,7 @@ Control de Bienes
   id="btn-detener"
   onclick="detenerCamara()">
 
-🛑 DETENER CÁMARA
+🛑 Detener cámara
 
 </button>
 
@@ -301,33 +287,15 @@ Control de Bienes
 <div id="resultado"></div>
 
 
-<button
-  id="btn-ir"
-  onclick="irAlSistema()">
-
-➡️ ABRIR CONTROL DE BIENES
-
-</button>
-
-
-<button
-  id="btn-nuevo"
-  onclick="nuevoQR()">
-
-📷 ESCANEAR OTRO CÓDIGO QR
-
-</button>
-
-
 <div class="instrucciones">
 
-Apunte la cámara hacia el código QR
-de la ficha.
+Apunte la cámara hacia el
+código QR de la ficha.
 
 <br><br>
 
-El sistema utilizará únicamente
-<strong>el número de la ficha</strong>.
+El número de ficha puede venir
+como <strong>SIAFI-21026</strong>.
 
 </div>
 
@@ -341,26 +309,27 @@ El sistema utilizará únicamente
 
 
 /* ==========================================================
-   URL DE APPS SCRIPT
+   CONFIGURACIÓN
    ========================================================== */
+
+
+/*
+ * IMPORTANTE:
+ *
+ * Esta es la URL ACTUAL de tu Web App de Apps Script.
+ */
 
 const URL_WEB_APP =
-"https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
+  "https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
 
-
-/* ==========================================================
-   VARIABLES
-   ========================================================== */
 
 let lector = null;
 
 let escaneando = false;
 
-let procesandoQR = false;
+let ultimoQR = "";
 
-let fichaDetectada = "";
-
-let urlDestino = "";
+let ultimaLectura = 0;
 
 
 /* ==========================================================
@@ -377,8 +346,10 @@ function mostrarEstado(
       "estado"
     );
 
+
   estado.textContent =
     mensaje;
+
 
   estado.classList.toggle(
     "error",
@@ -389,41 +360,75 @@ function mostrarEstado(
 
 
 /* ==========================================================
+   RESULTADO
+   ========================================================== */
+
+function mostrarResultado(
+  texto
+) {
+
+  const resultado =
+    document.getElementById(
+      "resultado"
+    );
+
+
+  resultado.textContent =
+    "✅ QR detectado: " +
+    texto;
+
+
+  resultado.style.display =
+    "block";
+
+}
+
+
+/* ==========================================================
+   OBTENER ÚNICAMENTE EL NÚMERO
+   ========================================================== */
+
+function obtenerNumeroFicha(
+  textoQR
+) {
+
+  const texto =
+    String(
+      textoQR || ""
+    ).trim();
+
+
+  /*
+   * Ejemplos:
+   *
+   * SIAFI-21026  → 21026
+   * SIAFI-12345  → 12345
+   * 21026        → 21026
+   *
+   * Se eliminan todos los caracteres
+   * que no sean números.
+   */
+
+  const numero =
+    texto.replace(
+      /\D/g,
+      ""
+    );
+
+
+  return numero;
+
+}
+
+
+/* ==========================================================
    INICIAR CÁMARA
    ========================================================== */
 
 async function iniciarCamara() {
 
-  if (escaneando) {
+  if (escaneando)
     return;
-  }
-
-  procesandoQR =
-    false;
-
-  fichaDetectada =
-    "";
-
-  urlDestino =
-    "";
-
-
-  document.getElementById(
-    "resultado"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "btn-ir"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "btn-nuevo"
-  ).style.display =
-    "none";
 
 
   const reader =
@@ -432,33 +437,119 @@ async function iniciarCamara() {
     );
 
 
-  document.getElementById(
-    "btn-camara"
-  ).style.display =
-    "none";
+  const boton =
+    document.getElementById(
+      "btn-camara"
+    );
 
 
-  document.getElementById(
-    "btn-detener"
-  ).style.display =
-    "block";
-
-
-  reader.style.display =
-    "block";
+  const detener =
+    document.getElementById(
+      "btn-detener"
+    );
 
 
   mostrarEstado(
-    "🎥 Abriendo cámara..."
+    "🎥 Solicitando permiso para usar la cámara..."
   );
 
 
   try {
 
+
+    /*
+     * Primero comprobamos que el navegador
+     * permita utilizar la cámara.
+     */
+
+    if (
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
+
+      throw new Error(
+        "CAMARA_NO_DISPONIBLE"
+      );
+
+    }
+
+
+    const stream =
+      await navigator
+        .mediaDevices
+        .getUserMedia({
+
+          video: {
+
+            facingMode: {
+              ideal:"environment"
+            }
+
+          },
+
+          audio:false
+
+        });
+
+
+    stream
+      .getTracks()
+      .forEach(
+        track =>
+          track.stop()
+      );
+
+
+    reader.style.display =
+      "block";
+
+
+    boton.style.display =
+      "none";
+
+
+    detener.style.display =
+      "block";
+
+
     lector =
       new Html5Qrcode(
         "reader"
       );
+
+
+    const configuracion = {
+
+      fps:10,
+
+      qrbox:function(
+        ancho,
+        alto
+      ) {
+
+        const tamaño =
+          Math.min(
+            ancho * 0.75,
+            alto * 0.75,
+            300
+          );
+
+
+        return {
+
+          width:tamaño,
+
+          height:tamaño
+
+        };
+
+      },
+
+      aspectRatio:1.0,
+
+      disableFlip:false
+
+    };
 
 
     await lector.start(
@@ -468,23 +559,7 @@ async function iniciarCamara() {
           "environment"
       },
 
-      {
-
-        fps: 10,
-
-        qrbox: {
-
-          width: 250,
-
-          height: 250
-
-        },
-
-        aspectRatio: 1.0,
-
-        disableFlip: false
-
-      },
+      configuracion,
 
       function(textoQR) {
 
@@ -494,12 +569,7 @@ async function iniciarCamara() {
 
       },
 
-      function(error) {
-
-        // Ignorar errores normales
-        // durante la búsqueda.
-
-      }
+      function() {}
 
     );
 
@@ -509,7 +579,7 @@ async function iniciarCamara() {
 
 
     mostrarEstado(
-      "📷 CÁMARA FUNCIONANDO - Apunte al QR"
+      "📷 Cámara funcionando. Apunte al código QR."
     );
 
 
@@ -527,240 +597,80 @@ async function iniciarCamara() {
       "none";
 
 
-    document.getElementById(
-      "btn-camara"
-    ).style.display =
+    boton.style.display =
       "block";
 
 
-    document.getElementById(
-      "btn-detener"
-    ).style.display =
+    detener.style.display =
       "none";
 
 
-    mostrarEstado(
-
-      "❌ No se pudo acceder a la cámara: " +
-      (
-        error.message ||
-        error
-      ),
-
-      true
-
-    );
-
-  }
-
-}
+    let mensaje =
+      "❌ No se pudo acceder a la cámara.";
 
 
-/* ==========================================================
-   PROCESAR QR
-   ========================================================== */
+    if (
+      error &&
+      error.name ===
+      "NotAllowedError"
+    ) {
 
-function procesarQR(
-  textoQR
-) {
+      mensaje =
+        "❌ El navegador bloqueó el acceso a la cámara.";
 
-  if (procesandoQR) {
-    return;
-  }
+    }
 
+    else if (
+      error &&
+      error.name ===
+      "NotFoundError"
+    ) {
 
-  const texto =
-    String(
-      textoQR || ""
-    ).trim();
+      mensaje =
+        "❌ No se encontró una cámara disponible.";
 
+    }
 
-  if (!texto) {
-    return;
-  }
+    else if (
+      error &&
+      error.name ===
+      "NotReadableError"
+    ) {
 
+      mensaje =
+        "❌ La cámara está siendo utilizada por otra aplicación.";
 
-  /*
-   * Extraer únicamente números.
-   *
-   * SIAFI-21026
-   *
-   * queda:
-   *
-   * 21026
-   */
+    }
 
-  const ficha =
-    texto.replace(
-      /\D/g,
-      ""
-    );
+    else if (
+      error &&
+      error.name ===
+      "SecurityError"
+    ) {
 
+      mensaje =
+        "❌ El navegador bloqueó la cámara por seguridad.";
 
-  if (!ficha) {
+    }
 
-    mostrarEstado(
-      "❌ El QR no contiene un número válido.",
-      true
-    );
+    else if (
+      error &&
+      error.message ===
+      "CAMARA_NO_DISPONIBLE"
+    ) {
 
-    return;
-
-  }
-
-
-  procesandoQR =
-    true;
-
-
-  fichaDetectada =
-    ficha;
-
-
-  /*
-   * Crear URL exacta
-   */
-
-  urlDestino =
-    URL_WEB_APP +
-    "?ficha=" +
-    encodeURIComponent(
-      ficha
-    );
-
-
-  /*
-   * Mostrar resultado
-   */
-
-  const resultado =
-    document.getElementById(
-      "resultado"
-    );
-
-
-  resultado.innerHTML =
-    "✅ QR DETECTADO<br><br>" +
-    "Ficha: <strong>" +
-    ficha +
-    "</strong>";
-
-
-  resultado.style.display =
-    "block";
-
-
-  mostrarEstado(
-    "✅ Ficha detectada correctamente."
-  );
-
-
-  /*
-   * Detener cámara
-   */
-
-  detenerCamara();
-
-
-  /*
-   * Mostrar botón para ir a Apps Script
-   */
-
-  document.getElementById(
-    "btn-ir"
-  ).style.display =
-    "block";
-
-
-  mostrarEstado(
-    "👉 Pulse ABRIR CONTROL DE BIENES"
-  );
-
-}
-
-
-/* ==========================================================
-   IR A APPS SCRIPT
-   ========================================================== */
-
-function irAlSistema() {
-
-  if (!urlDestino) {
-
-    if (!fichaDetectada) {
-
-      mostrarEstado(
-        "❌ No hay ninguna ficha detectada.",
-        true
-      );
-
-      return;
+      mensaje =
+        "❌ Este navegador no permite utilizar la cámara.";
 
     }
 
 
-    urlDestino =
-      URL_WEB_APP +
-      "?ficha=" +
-      encodeURIComponent(
-        fichaDetectada
-      );
+    mostrarEstado(
+      mensaje,
+      true
+    );
 
   }
-
-
-  console.log(
-    "Abriendo:",
-    urlDestino
-  );
-
-
-  /*
-   * Navegación directa.
-   */
-
-  window.location.assign(
-    urlDestino
-  );
-
-}
-
-
-/* ==========================================================
-   ESCANEAR OTRO QR
-   ========================================================== */
-
-function nuevoQR() {
-
-  fichaDetectada =
-    "";
-
-  urlDestino =
-    "";
-
-  procesandoQR =
-    false;
-
-
-  document.getElementById(
-    "resultado"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "btn-ir"
-  ).style.display =
-    "none";
-
-
-  document.getElementById(
-    "btn-nuevo"
-  ).style.display =
-    "none";
-
-
-  iniciarCamara();
 
 }
 
@@ -782,18 +692,6 @@ async function detenerCamara() {
 
     }
 
-  }
-
-  catch(error) {
-
-    console.warn(
-      error
-    );
-
-  }
-
-
-  try {
 
     if (lector) {
 
@@ -814,6 +712,7 @@ async function detenerCamara() {
 
   lector =
     null;
+
 
   escaneando =
     false;
@@ -836,7 +735,133 @@ async function detenerCamara() {
   ).style.display =
     "none";
 
+
+  mostrarEstado(
+    "📷 Cámara desactivada"
+  );
+
 }
+
+
+/* ==========================================================
+   PROCESAR QR
+   ========================================================== */
+
+function procesarQR(
+  textoQR
+) {
+
+  const ahora =
+    Date.now();
+
+
+  const texto =
+    String(
+      textoQR || ""
+    ).trim();
+
+
+  if (!texto)
+    return;
+
+
+  /*
+   * Evitar detectar el mismo QR
+   * varias veces.
+   */
+
+  if (
+    texto === ultimoQR &&
+    ahora - ultimaLectura < 3000
+  ) {
+
+    return;
+
+  }
+
+
+  ultimoQR =
+    texto;
+
+
+  ultimaLectura =
+    ahora;
+
+
+  /*
+   * OBTENER SOLAMENTE NÚMEROS.
+   */
+
+  const numeroFicha =
+    obtenerNumeroFicha(
+      texto
+    );
+
+
+  if (!numeroFicha) {
+
+    mostrarEstado(
+      "❌ El QR no contiene un número de ficha.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  mostrarResultado(
+    texto +
+    " → Ficha " +
+    numeroFicha
+  );
+
+
+  mostrarEstado(
+    "✅ Código detectado. Abriendo Control de Bienes..."
+  );
+
+
+  detenerCamara();
+
+
+  /*
+   * ========================================================
+   * CREAR URL DE APPS SCRIPT
+   * ========================================================
+   *
+   * Ejemplo:
+   *
+   * https://script.google.com/.../exec?ficha=21026
+   *
+   */
+
+  const destino =
+    URL_WEB_APP +
+    "?ficha=" +
+    encodeURIComponent(
+      numeroFicha
+    );
+
+
+  /*
+   * Pequeña pausa para permitir
+   * detener correctamente la cámara.
+   */
+
+  setTimeout(
+    function() {
+
+      window.location.assign(
+        destino
+      );
+
+    },
+    500
+  );
+
+}
+
 
 </script>
 
