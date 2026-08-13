@@ -22,7 +22,6 @@
     body {
 
       margin: 0;
-
       padding: 15px;
 
       min-height: 100vh;
@@ -299,25 +298,11 @@
 
 
 /* ==========================================================
-   CONFIGURACIÓN
+   URL DE TU WEB APP DE GOOGLE APPS SCRIPT
    ========================================================== */
 
-
-/*
- * IMPORTANTE:
- *
- * Pega aquí la URL DE TU WEB APP DE APPS SCRIPT.
- *
- * Debe terminar en /exec
- *
- * Ejemplo:
- *
- * https://script.google.com/macros/s/XXXXXXXXXXXX/exec
- *
- */
-
 const URL_WEB_APP =
-  "PEGA_AQUI_LA_URL_DE_TU_WEB_APP";
+  "https://script.google.com/macros/s/AKfycbzuWUxuHh6Rp1uTbgo3PYKsDXn6B2FerY_tBhVdypZzYqIdLyOvJUQtLczzQGVq9deW/exec";
 
 
 let lector = null;
@@ -417,10 +402,6 @@ async function iniciarCamara() {
   try {
 
 
-    /*
-     * Solicitar permiso directamente.
-     */
-
     const stream =
       await navigator
         .mediaDevices
@@ -441,10 +422,6 @@ async function iniciarCamara() {
 
         });
 
-
-    /*
-     * Liberar el stream temporal.
-     */
 
     stream
       .getTracks()
@@ -542,7 +519,6 @@ async function iniciarCamara() {
   }
 
   catch (error) {
-
 
     console.error(
       "ERROR DE CÁMARA:",
@@ -711,10 +687,6 @@ function procesarQR(
     return;
 
 
-  /*
-   * Evitar duplicados.
-   */
-
   if (
     texto === ultimoQR &&
     ahora - ultimaLectura < 3000
@@ -743,36 +715,11 @@ function procesarQR(
   );
 
 
-  /*
-   * Detener cámara.
-   */
-
   detenerCamara();
 
 
   /*
-   * Validar URL de Apps Script.
-   */
-
-  if (
-    !URL_WEB_APP ||
-    URL_WEB_APP ===
-      "PEGA_AQUI_LA_URL_DE_TU_WEB_APP"
-  ) {
-
-    mostrarEstado(
-      "⚠️ Falta configurar la URL de tu Web App.",
-      true
-    );
-
-    return;
-
-  }
-
-
-  /*
-   * Enviar la ficha a Apps Script
-   * mediante la URL.
+   * Enviar la ficha a tu Web App.
    */
 
   const separador =
@@ -789,11 +736,6 @@ function procesarQR(
       texto
     );
 
-
-  /*
-   * Dar tiempo para mostrar
-   * el resultado y luego regresar.
-   */
 
   setTimeout(
     function() {
@@ -812,4 +754,5 @@ function procesarQR(
 
 
 </body>
+
 </html>
