@@ -3,337 +3,301 @@
 
 <head>
 
-  <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
 
-  <title>Lector QR - Bienes</title>
+<title>Lector QR - Bienes</title>
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-  <style>
+<style>
 
-    * {
-      box-sizing: border-box;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    body {
+body {
 
-      margin: 0;
-      padding: 15px;
+  margin: 0;
+  padding: 15px;
 
-      min-height: 100vh;
+  min-height: 100vh;
 
-      font-family:
-        Arial,
-        sans-serif;
+  font-family:
+    Arial,
+    sans-serif;
 
-      background:
-        linear-gradient(
-          135deg,
-          #667eea,
-          #764ba2
-        );
+  background:
+    linear-gradient(
+      135deg,
+      #667eea,
+      #764ba2
+    );
 
-    }
+}
 
-    .contenedor {
+.contenedor {
 
-      max-width: 500px;
+  max-width: 500px;
 
-      margin: 0 auto;
+  margin: 0 auto;
 
-      background: white;
+  background: white;
 
-      border-radius: 15px;
+  border-radius: 15px;
 
-      overflow: hidden;
+  overflow: hidden;
 
-      box-shadow:
-        0 5px 25px
-        rgba(0,0,0,.2);
+  box-shadow:
+    0 5px 25px
+    rgba(0,0,0,.2);
 
-    }
+}
 
-    .encabezado {
+.encabezado {
 
-      background: #4CAF50;
+  background: #4CAF50;
 
-      color: white;
+  color: white;
 
-      text-align: center;
+  text-align: center;
 
-      padding: 22px 15px;
+  padding: 22px 15px;
 
-    }
+}
 
-    .encabezado h1 {
+.encabezado h1 {
 
-      margin: 0 0 5px;
+  margin: 0 0 5px;
 
-      font-size: 23px;
+  font-size: 23px;
 
-    }
+}
 
-    .encabezado p {
+.encabezado p {
 
-      margin: 0;
+  margin: 0;
 
-      font-size: 14px;
+  font-size: 14px;
 
-    }
+}
 
-    .contenido {
+.contenido {
 
-      padding: 20px;
+  padding: 20px;
 
-    }
+}
 
-    .estado {
+.estado {
 
-      text-align: center;
+  text-align: center;
 
-      padding: 12px;
+  padding: 12px;
 
-      margin-bottom: 15px;
+  margin-bottom: 15px;
 
-      border-radius: 10px;
+  border-radius: 10px;
 
-      background: #f1f3f5;
+  background: #f1f3f5;
 
-      color: #555;
+  color: #555;
 
-      font-weight: bold;
+  font-weight: bold;
 
-    }
+}
 
-    #reader {
+#reader {
 
-      width: 100%;
+  width: 100%;
 
-      max-width: 400px;
+  max-width: 400px;
 
-      margin: 0 auto 20px;
+  margin: 0 auto 20px;
 
-      display: none;
+  border-radius: 12px;
 
-      border-radius: 12px;
+  overflow: hidden;
 
-      overflow: hidden;
+  background: #000;
 
-      background: #000;
+}
 
-    }
+#reader video {
 
-    #reader video {
+  width: 100% !important;
 
-      width: 100% !important;
+  height: auto !important;
 
-      height: auto !important;
+}
 
-      display: block;
+button {
 
-    }
+  width: 100%;
 
-    button {
+  padding: 15px;
 
-      width: 100%;
+  margin-bottom: 10px;
 
-      padding: 15px;
+  border: none;
 
-      margin-bottom: 10px;
+  border-radius: 10px;
 
-      border: none;
+  font-size: 16px;
 
-      border-radius: 10px;
+  font-weight: bold;
 
-      font-size: 16px;
+  cursor: pointer;
 
-      font-weight: bold;
+}
 
-      cursor: pointer;
+#btn-camara {
 
-    }
+  background: #4CAF50;
 
-    #btn-camara {
+  color: white;
 
-      background: #4CAF50;
+}
 
-      color: white;
+#btn-detener {
 
-    }
+  background: #dc3545;
 
-    #btn-detener {
+  color: white;
 
-      background: #dc3545;
+  display: none;
 
-      color: white;
+}
 
-      display: none;
+#resultado {
 
-    }
+  display: none;
 
-    #resultado {
+  margin-top: 15px;
 
-      display: none;
+  padding: 15px;
 
-      margin-top: 15px;
+  border-radius: 10px;
 
-      padding: 15px;
+  text-align: center;
 
-      border-radius: 10px;
+  background: #d4edda;
 
-      text-align: center;
+  color: #155724;
 
-      background: #d4edda;
+  font-weight: bold;
 
-      color: #155724;
+  word-break: break-word;
 
-      font-weight: bold;
+}
 
-      word-break: break-word;
+.instrucciones {
 
-    }
+  margin-top: 15px;
 
-    .instrucciones {
+  padding: 12px;
 
-      margin-top: 15px;
+  border-radius: 10px;
 
-      padding: 12px;
+  background: #e3f2fd;
 
-      border-radius: 10px;
+  color: #1565c0;
 
-      background: #e3f2fd;
+  font-size: 13px;
 
-      color: #1565c0;
+  text-align: center;
 
-      font-size: 13px;
+}
 
-      text-align: center;
+.error {
 
-    }
+  background: #f8d7da;
 
-    .error {
+  color: #721c24;
 
-      background: #f8d7da;
+}
 
-      color: #721c24;
-
-    }
-
-    .exito {
-
-      background: #d4edda;
-
-      color: #155724;
-
-    }
-
-  </style>
+</style>
 
 </head>
 
-
 <body>
-
 
 <div class="contenedor">
 
+<div class="encabezado">
 
-  <div class="encabezado">
+<h1>
+📷 LECTOR QR
+</h1>
 
-    <h1>
-      📷 LECTOR QR
-    </h1>
+<p>
+Control de Bienes
+</p>
 
-    <p>
-      Control de Bienes
-    </p>
+</div>
 
-  </div>
+<div class="contenido">
 
+<div
+  id="estado"
+  class="estado">
 
-  <div class="contenido">
+🎥 Preparando cámara...
 
+</div>
 
-    <div
-      id="estado"
-      class="estado">
+<div id="reader"></div>
 
-      📷 Cámara desactivada
+<button
+  id="btn-camara"
+  onclick="iniciarCamara()">
 
-    </div>
+📷 ACTIVAR CÁMARA
 
+</button>
 
-    <div id="reader"></div>
+<button
+  id="btn-detener"
+  onclick="detenerCamara()">
 
+🛑 DETENER CÁMARA
 
-    <button
-      id="btn-camara"
-      type="button"
-      onclick="iniciarCamara()">
+</button>
 
-      📷 Activar cámara
+<div id="resultado"></div>
 
-    </button>
+<div class="instrucciones">
 
+Apunte la cámara hacia el código QR.
 
-    <button
-      id="btn-detener"
-      type="button"
-      onclick="detenerCamara()">
+<br><br>
 
-      🛑 Detener cámara
+El sistema utilizará únicamente
+el número de la ficha.
 
-    </button>
+</div>
 
-
-    <div id="resultado"></div>
-
-
-    <div class="instrucciones">
-
-      Apunte la cámara hacia el código QR
-      de la ficha.
-
-      <br><br>
-
-      El código debe tener un formato como:
-
-      <br>
-
-      <strong>SIAFI-12345</strong>
-
-    </div>
-
-
-  </div>
+</div>
 
 </div>
 
 
 <script>
 
-
 /* ==========================================================
-   URL DE TU WEB APP DE GOOGLE APPS SCRIPT
+   URL DEFINITIVA DE GOOGLE APPS SCRIPT
    ========================================================== */
 
 const URL_WEB_APP =
-  "https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
+"https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
 
-
-/* ==========================================================
-   VARIABLES
-   ========================================================== */
 
 let lector = null;
 
 let escaneando = false;
-
-let procesandoQR = false;
 
 let ultimoQR = "";
 
@@ -341,7 +305,7 @@ let ultimaLectura = 0;
 
 
 /* ==========================================================
-   MOSTRAR ESTADO
+   ESTADO
    ========================================================== */
 
 function mostrarEstado(
@@ -357,28 +321,20 @@ function mostrarEstado(
   estado.textContent =
     mensaje;
 
-  estado.classList.remove(
+  estado.classList.toggle(
     "error",
-    "exito"
+    error
   );
-
-  if (error) {
-
-    estado.classList.add(
-      "error"
-    );
-
-  }
 
 }
 
 
 /* ==========================================================
-   MOSTRAR RESULTADO
+   RESULTADO
    ========================================================== */
 
 function mostrarResultado(
-  texto
+  ficha
 ) {
 
   const resultado =
@@ -386,8 +342,11 @@ function mostrarResultado(
       "resultado"
     );
 
-  resultado.textContent =
-    "✅ QR detectado: " + texto;
+  resultado.innerHTML =
+    "✅ FICHA DETECTADA<br><br>" +
+    "<strong style='font-size:28px'>" +
+    ficha +
+    "</strong>";
 
   resultado.style.display =
     "block";
@@ -396,31 +355,66 @@ function mostrarResultado(
 
 
 /* ==========================================================
-   NORMALIZAR FICHA
+   EXTRAER SOLAMENTE NÚMEROS
    ========================================================== */
 
-function obtenerFicha(
-  textoQR
+function extraerNumero(
+  texto
 ) {
 
-  let texto =
+  texto =
     String(
-      textoQR || ""
-    )
-    .trim();
-
-
-  if (!texto)
-    return "";
+      texto || ""
+    ).trim();
 
 
   /*
-   * Si el QR contiene una URL con:
+   * Si el QR contiene:
    *
-   * ?ficha=SIAFI-123
+   * 12345
    *
-   * intentamos obtener automáticamente
-   * el valor de ficha.
+   * devuelve:
+   *
+   * 12345
+   */
+
+  if (
+    /^\d+$/.test(texto)
+  ) {
+
+    return texto;
+
+  }
+
+
+  /*
+   * Si contiene:
+   *
+   * SIAFI-12345
+   *
+   * devuelve:
+   *
+   * 12345
+   */
+
+  const siafi =
+    texto.match(
+      /SIAFI\s*[-:]?\s*(\d+)/i
+    );
+
+
+  if (
+    siafi
+  ) {
+
+    return siafi[1];
+
+  }
+
+
+  /*
+   * Si contiene una URL
+   * con ?ficha=12345
    */
 
   try {
@@ -438,10 +432,20 @@ function obtenerFicha(
           "ficha"
         );
 
-      if (ficha) {
+      if (
+        ficha
+      ) {
 
-        texto =
-          ficha.trim();
+        const numero =
+          ficha.match(/\d+/);
+
+        if (
+          numero
+        ) {
+
+          return numero[0];
+
+        }
 
       }
 
@@ -449,63 +453,34 @@ function obtenerFicha(
 
   }
 
-  catch (error) {
+  catch(error) {
 
-    console.warn(
-      "No fue posible interpretar la URL del QR.",
-      error
-    );
+    console.warn(error);
 
   }
 
 
   /*
-   * Limpiar espacios.
+   * Último recurso:
+   * buscar cualquier número.
    */
 
-  texto =
-    texto.trim();
+  const numero =
+    texto.match(
+      /\d+/
+    );
 
 
-  /*
-   * Convertir a mayúsculas.
-   */
+  if (
+    numero
+  ) {
 
-  texto =
-    texto.toUpperCase();
+    return numero[0];
 
-
-  return texto;
-
-}
+  }
 
 
-/* ==========================================================
-   VALIDAR FICHA
-   ========================================================== */
-
-function validarFicha(
-  ficha
-) {
-
-  /*
-   * Acepta:
-   *
-   * SIAFI-123
-   * SIAFI-00123
-   * SIAFI-12345
-   *
-   * También permite espacios alrededor,
-   * que ya fueron eliminados.
-   */
-
-  const patron =
-    /^SIAFI-[A-Z0-9-]+$/i;
-
-
-  return patron.test(
-    ficha
-  );
+  return "";
 
 }
 
@@ -516,12 +491,13 @@ function validarFicha(
 
 async function iniciarCamara() {
 
-  if (escaneando)
+  if (
+    escaneando
+  ) {
+
     return;
 
-
-  if (procesandoQR)
-    return;
+  }
 
 
   const reader =
@@ -529,12 +505,10 @@ async function iniciarCamara() {
       "reader"
     );
 
-
   const boton =
     document.getElementById(
       "btn-camara"
     );
-
 
   const detener =
     document.getElementById(
@@ -550,24 +524,49 @@ async function iniciarCamara() {
   try {
 
     /*
-     * Mostrar lector.
+     * Primero comprobamos
+     * que el navegador permita
+     * utilizar la cámara.
      */
+
+    const stream =
+      await navigator
+        .mediaDevices
+        .getUserMedia({
+
+          video: {
+            facingMode: {
+              ideal:
+                "environment"
+            }
+          },
+
+          audio: false
+
+        });
+
+
+    /*
+     * Liberamos esta prueba.
+     */
+
+    stream
+      .getTracks()
+      .forEach(
+        track =>
+          track.stop()
+      );
+
 
     reader.style.display =
       "block";
 
-
     boton.style.display =
       "none";
-
 
     detener.style.display =
       "block";
 
-
-    /*
-     * Crear lector.
-     */
 
     lector =
       new Html5Qrcode(
@@ -584,21 +583,20 @@ async function iniciarCamara() {
         alto
       ) {
 
-        const tamaño =
+        const tamano =
           Math.min(
             ancho * 0.75,
             alto * 0.75,
             300
           );
 
-
         return {
 
           width:
-            tamaño,
+            tamano,
 
           height:
-            tamaño
+            tamano
 
         };
 
@@ -610,16 +608,6 @@ async function iniciarCamara() {
 
     };
 
-
-    /*
-     * IMPORTANTE:
-     *
-     * Html5Qrcode solicita directamente
-     * el acceso a la cámara.
-     *
-     * Ya no hacemos getUserMedia()
-     * antes de esto.
-     */
 
     await lector.start(
 
@@ -638,17 +626,7 @@ async function iniciarCamara() {
 
       },
 
-      function(errorMessage) {
-
-        /*
-         * Los errores de lectura continua
-         * son normales mientras busca el QR.
-         *
-         * No mostramos error en pantalla
-         * para no molestar al usuario.
-         */
-
-      }
+      function() {}
 
     );
 
@@ -658,13 +636,12 @@ async function iniciarCamara() {
 
 
     mostrarEstado(
-      "📷 Escaneando... Apunte al código QR"
+      "📷 ESCANEANDO... Apunte al código QR"
     );
-
 
   }
 
-  catch (error) {
+  catch(error) {
 
     console.error(
       "ERROR DE CÁMARA:",
@@ -675,10 +652,8 @@ async function iniciarCamara() {
     reader.style.display =
       "none";
 
-
     boton.style.display =
       "block";
-
 
     detener.style.display =
       "none";
@@ -689,40 +664,28 @@ async function iniciarCamara() {
 
 
     if (
-      error &&
-      (
-        error.name ===
-          "NotAllowedError" ||
-
-        error.message &&
-        error.message
-          .toLowerCase()
-          .includes(
-            "permission"
-          )
-      )
+      error.name ===
+      "NotAllowedError"
     ) {
 
       mensaje =
-        "❌ El navegador bloqueó el acceso a la cámara. Verifique los permisos del sitio.";
+        "❌ El navegador bloqueó el acceso a la cámara.";
 
     }
 
     else if (
-      error &&
       error.name ===
-        "NotFoundError"
+      "NotFoundError"
     ) {
 
       mensaje =
-        "❌ No se encontró una cámara disponible.";
+        "❌ No se encontró una cámara.";
 
     }
 
     else if (
-      error &&
       error.name ===
-        "NotReadableError"
+      "NotReadableError"
     ) {
 
       mensaje =
@@ -731,24 +694,12 @@ async function iniciarCamara() {
     }
 
     else if (
-      error &&
       error.name ===
-        "SecurityError"
+      "SecurityError"
     ) {
 
       mensaje =
-        "❌ El navegador bloqueó el acceso por seguridad.";
-
-    }
-
-    else if (
-      error &&
-      error.message
-    ) {
-
-      mensaje =
-        "❌ " +
-        error.message;
+        "❌ El navegador bloqueó la cámara por seguridad.";
 
     }
 
@@ -780,21 +731,10 @@ async function detenerCamara() {
 
     }
 
-  }
 
-  catch (error) {
-
-    console.warn(
-      "Error al detener cámara:",
-      error
-    );
-
-  }
-
-
-  try {
-
-    if (lector) {
+    if (
+      lector
+    ) {
 
       await lector.clear();
 
@@ -802,19 +742,15 @@ async function detenerCamara() {
 
   }
 
-  catch (error) {
+  catch(error) {
 
-    console.warn(
-      "Error al limpiar lector:",
-      error
-    );
+    console.warn(error);
 
   }
 
 
   lector =
     null;
-
 
   escaneando =
     false;
@@ -837,6 +773,11 @@ async function detenerCamara() {
   ).style.display =
     "none";
 
+
+  mostrarEstado(
+    "📷 Cámara detenida"
+  );
+
 }
 
 
@@ -844,26 +785,27 @@ async function detenerCamara() {
    PROCESAR QR
    ========================================================== */
 
-async function procesarQR(
+function procesarQR(
   textoQR
 ) {
-
-  if (procesandoQR)
-    return;
-
 
   const ahora =
     Date.now();
 
 
-  const textoOriginal =
+  const texto =
     String(
       textoQR || ""
     ).trim();
 
 
-  if (!textoOriginal)
+  if (
+    !texto
+  ) {
+
     return;
+
+  }
 
 
   /*
@@ -871,7 +813,7 @@ async function procesarQR(
    */
 
   if (
-    textoOriginal === ultimoQR &&
+    texto === ultimoQR &&
     ahora - ultimaLectura < 3000
   ) {
 
@@ -881,51 +823,35 @@ async function procesarQR(
 
 
   ultimoQR =
-    textoOriginal;
-
+    texto;
 
   ultimaLectura =
     ahora;
 
 
   /*
-   * Obtener ficha.
+   * EXTRAER ÚNICAMENTE
+   * EL NÚMERO.
    */
 
   const ficha =
-    obtenerFicha(
-      textoOriginal
+    extraerNumero(
+      texto
     );
 
-
-  /*
-   * Validar que sea una ficha SIAFI.
-   */
 
   if (
-    !validarFicha(
-      ficha
-    )
+    !ficha
   ) {
 
-    mostrarResultado(
-      textoOriginal
-    );
-
-
     mostrarEstado(
-      "⚠️ El código QR no contiene una ficha SIAFI válida.",
+      "❌ El QR no contiene un número de ficha válido.",
       true
     );
-
 
     return;
 
   }
-
-
-  procesandoQR =
-    true;
 
 
   mostrarResultado(
@@ -934,42 +860,44 @@ async function procesarQR(
 
 
   mostrarEstado(
-    "✅ Ficha detectada: " +
+    "✅ Ficha " +
     ficha +
-    " | Abriendo ficha..."
+    " detectada. Abriendo sistema..."
   );
 
 
-  /*
-   * Detener cámara.
-   */
-
-  await detenerCamara();
+  detenerCamara();
 
 
   /*
-   * Construir URL.
+   * ========================================================
+   * REDIRECCIÓN
+   *
+   * EJEMPLO:
+   *
+   * https://.../exec?ficha=12345
+   *
+   * ========================================================
    */
-
-  const separador =
-    URL_WEB_APP.includes("?")
-      ? "&"
-      : "?";
-
 
   const destino =
     URL_WEB_APP +
-    separador +
-    "ficha=" +
+    "?ficha=" +
     encodeURIComponent(
       ficha
     );
 
 
-  /*
-   * Pequeña pausa para permitir
-   * que la cámara se cierre.
-   */
+  console.log(
+    "FICHA ENVIADA:",
+    ficha
+  );
+
+  console.log(
+    "DESTINO:",
+    destino
+  );
+
 
   setTimeout(
     function() {
@@ -978,39 +906,33 @@ async function procesarQR(
         destino;
 
     },
-    500
+    700
   );
 
 }
 
 
 /* ==========================================================
-   LIMPIEZA AL SALIR
+   INICIAR AUTOMÁTICAMENTE
    ========================================================== */
 
 window.addEventListener(
-  "beforeunload",
+  "load",
   function() {
 
-    if (
-      lector &&
-      escaneando
-    ) {
+    /*
+     * No activamos la cámara automáticamente.
+     * El usuario pulsa el botón.
+     */
 
-      lector
-        .stop()
-        .catch(
-          function() {}
-        );
-
-    }
+    mostrarEstado(
+      "📷 Cámara lista"
+    );
 
   }
 );
 
-
 </script>
-
 
 </body>
 
