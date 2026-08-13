@@ -181,11 +181,23 @@ button {
 
 }
 
+#btn-nuevo {
+
+  background: #6c757d;
+
+  color: white;
+
+  display: none;
+
+}
+
 #resultado {
 
   display: none;
 
   margin-top: 15px;
+
+  margin-bottom: 15px;
 
   padding: 15px;
 
@@ -293,7 +305,16 @@ Control de Bienes
   id="btn-ir"
   onclick="irAlSistema()">
 
-➡️ IR AL CONTROL DE BIENES
+➡️ ABRIR CONTROL DE BIENES
+
+</button>
+
+
+<button
+  id="btn-nuevo"
+  onclick="nuevoQR()">
+
+📷 ESCANEAR OTRO CÓDIGO QR
 
 </button>
 
@@ -320,7 +341,7 @@ El sistema utilizará únicamente
 
 
 /* ==========================================================
-   URL DEFINITIVA DE APPS SCRIPT
+   URL DE APPS SCRIPT
    ========================================================== */
 
 const URL_WEB_APP =
@@ -339,9 +360,11 @@ let procesandoQR = false;
 
 let fichaDetectada = "";
 
+let urlDestino = "";
+
 
 /* ==========================================================
-   MOSTRAR ESTADO
+   ESTADO
    ========================================================== */
 
 function mostrarEstado(
@@ -378,25 +401,51 @@ async function iniciarCamara() {
   procesandoQR =
     false;
 
+  fichaDetectada =
+    "";
+
+  urlDestino =
+    "";
+
+
+  document.getElementById(
+    "resultado"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "btn-ir"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "btn-nuevo"
+  ).style.display =
+    "none";
+
+
   const reader =
     document.getElementById(
       "reader"
     );
+
 
   document.getElementById(
     "btn-camara"
   ).style.display =
     "none";
 
+
   document.getElementById(
     "btn-detener"
   ).style.display =
     "block";
 
-  document.getElementById(
-    "btn-ir"
-  ).style.display =
-    "none";
+
+  reader.style.display =
+    "block";
 
 
   mostrarEstado(
@@ -405,10 +454,6 @@ async function iniciarCamara() {
 
 
   try {
-
-    reader.style.display =
-      "block";
-
 
     lector =
       new Html5Qrcode(
@@ -419,7 +464,8 @@ async function iniciarCamara() {
     await lector.start(
 
       {
-        facingMode: "environment"
+        facingMode:
+          "environment"
       },
 
       {
@@ -450,8 +496,8 @@ async function iniciarCamara() {
 
       function(error) {
 
-        // Errores normales de búsqueda
-        // del QR. No mostramos nada.
+        // Ignorar errores normales
+        // durante la búsqueda.
 
       }
 
@@ -472,16 +518,20 @@ async function iniciarCamara() {
   catch(error) {
 
     console.error(
+      "ERROR DE CÁMARA:",
       error
     );
 
+
     reader.style.display =
       "none";
+
 
     document.getElementById(
       "btn-camara"
     ).style.display =
       "block";
+
 
     document.getElementById(
       "btn-detener"
@@ -515,9 +565,7 @@ function procesarQR(
 ) {
 
   if (procesandoQR) {
-
     return;
-
   }
 
 
@@ -528,20 +576,16 @@ function procesarQR(
 
 
   if (!texto) {
-
     return;
-
   }
 
 
   /*
-   * ========================================================
-   * EXTRAER SOLAMENTE NÚMEROS
-   * ========================================================
+   * Extraer únicamente números.
    *
    * SIAFI-21026
    *
-   * se convierte en:
+   * queda:
    *
    * 21026
    */
@@ -574,6 +618,18 @@ function procesarQR(
 
 
   /*
+   * Crear URL exacta
+   */
+
+  urlDestino =
+    URL_WEB_APP +
+    "?ficha=" +
+    encodeURIComponent(
+      ficha
+    );
+
+
+  /*
    * Mostrar resultado
    */
 
@@ -582,49 +638,32 @@ function procesarQR(
       "resultado"
     );
 
-  resultado.textContent =
-    "✅ QR detectado: " +
-    ficha;
+
+  resultado.innerHTML =
+    "✅ QR DETECTADO<br><br>" +
+    "Ficha: <strong>" +
+    ficha +
+    "</strong>";
+
 
   resultado.style.display =
     "block";
 
 
+  mostrarEstado(
+    "✅ Ficha detectada correctamente."
+  );
+
+
   /*
-   * Crear URL
+   * Detener cámara
    */
 
-  const destino =
-    URL_WEB_APP +
-    "?ficha=" +
-    encodeURIComponent(
-      ficha
-    );
-
-
-  console.log(
-    "QR ORIGINAL:",
-    texto
-  );
-
-  console.log(
-    "FICHA:",
-    ficha
-  );
-
-  console.log(
-    "DESTINO:",
-    destino
-  );
-
-
-  mostrarEstado(
-    "➡️ Abriendo Control de Bienes..."
-  );
+  detenerCamara();
 
 
   /*
-   * Mostrar botón de respaldo
+   * Mostrar botón para ir a Apps Script
    */
 
   document.getElementById(
@@ -633,53 +672,95 @@ function procesarQR(
     "block";
 
 
-  /*
-   * ========================================================
-   * REDIRECCIÓN DIRECTA
-   * ========================================================
-   *
-   * IMPORTANTE:
-   *
-   * NO esperamos a detener la cámara.
-   *
-   */
-
-  setTimeout(
-    function() {
-
-      window.location.href =
-        destino;
-
-    },
-    500
+  mostrarEstado(
+    "👉 Pulse ABRIR CONTROL DE BIENES"
   );
 
 }
 
 
 /* ==========================================================
-   BOTÓN MANUAL DE RESPALDO
+   IR A APPS SCRIPT
    ========================================================== */
 
 function irAlSistema() {
 
-  if (!fichaDetectada) {
+  if (!urlDestino) {
 
-    return;
+    if (!fichaDetectada) {
+
+      mostrarEstado(
+        "❌ No hay ninguna ficha detectada.",
+        true
+      );
+
+      return;
+
+    }
+
+
+    urlDestino =
+      URL_WEB_APP +
+      "?ficha=" +
+      encodeURIComponent(
+        fichaDetectada
+      );
 
   }
 
 
-  const destino =
-    URL_WEB_APP +
-    "?ficha=" +
-    encodeURIComponent(
-      fichaDetectada
-    );
+  console.log(
+    "Abriendo:",
+    urlDestino
+  );
 
 
-  window.location.href =
-    destino;
+  /*
+   * Navegación directa.
+   */
+
+  window.location.assign(
+    urlDestino
+  );
+
+}
+
+
+/* ==========================================================
+   ESCANEAR OTRO QR
+   ========================================================== */
+
+function nuevoQR() {
+
+  fichaDetectada =
+    "";
+
+  urlDestino =
+    "";
+
+  procesandoQR =
+    false;
+
+
+  document.getElementById(
+    "resultado"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "btn-ir"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "btn-nuevo"
+  ).style.display =
+    "none";
+
+
+  iniciarCamara();
 
 }
 
@@ -756,7 +837,6 @@ async function detenerCamara() {
     "none";
 
 }
-
 
 </script>
 
