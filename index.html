@@ -9,14 +9,6 @@
   name="viewport"
   content="width=device-width, initial-scale=1.0">
 
-<meta
-  name="apple-mobile-web-app-capable"
-  content="yes">
-
-<meta
-  name="mobile-web-app-capable"
-  content="yes">
-
 <title>Lector QR - Bienes</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -30,13 +22,11 @@
 body {
 
   margin: 0;
-  padding: 15px;
+  padding: 12px;
 
   min-height: 100vh;
 
-  font-family:
-    Arial,
-    sans-serif;
+  font-family: Arial, sans-serif;
 
   background:
     linear-gradient(
@@ -50,6 +40,7 @@ body {
 .contenedor {
 
   width: 100%;
+
   max-width: 500px;
 
   margin: 0 auto;
@@ -104,7 +95,7 @@ body {
 
   text-align: center;
 
-  padding: 12px;
+  padding: 13px;
 
   margin-bottom: 15px;
 
@@ -122,7 +113,7 @@ body {
 
   width: 100%;
 
-  max-width: 400px;
+  max-width: 420px;
 
   margin: 0 auto 20px;
 
@@ -148,7 +139,7 @@ button {
 
   width: 100%;
 
-  padding: 15px;
+  padding: 16px;
 
   margin-bottom: 10px;
 
@@ -156,7 +147,7 @@ button {
 
   border-radius: 10px;
 
-  font-size: 16px;
+  font-size: 17px;
 
   font-weight: bold;
 
@@ -234,88 +225,74 @@ button {
 
 </head>
 
-
 <body>
-
 
 <div class="contenedor">
 
+  <div class="encabezado">
 
-<div class="encabezado">
+    <h1>📷 LECTOR QR</h1>
 
-<h1>
-📷 LECTOR QR
-</h1>
+    <p>Control de Bienes</p>
 
-<p>
-Control de Bienes
-</p>
+  </div>
 
-</div>
+  <div class="contenido">
 
+    <div
+      id="estado"
+      class="estado">
 
-<div class="contenido">
+      📷 Cámara desactivada
 
+    </div>
 
-<div
-  id="estado"
-  class="estado">
+    <div id="reader"></div>
 
-📷 Cámara desactivada
+    <button
+      id="btn-camara"
+      type="button"
+      onclick="iniciarCamara()">
 
-</div>
+      📷 ACTIVAR CÁMARA
 
+    </button>
 
-<div id="reader"></div>
+    <button
+      id="btn-detener"
+      type="button"
+      onclick="detenerCamara()">
 
+      🛑 DETENER CÁMARA
 
-<button
-  id="btn-camara"
-  type="button">
+    </button>
 
-📷 ACTIVAR CÁMARA
+    <div id="resultado"></div>
 
-</button>
+    <div class="instrucciones">
 
+      Apunte la cámara hacia el código QR
+      de la ficha.
 
-<button
-  id="btn-detener"
-  type="button">
+      <br><br>
 
-🛑 DETENER CÁMARA
+      El sistema utilizará únicamente
+      los números de la ficha.
 
-</button>
+    </div>
 
-
-<div id="resultado"></div>
-
-
-<div class="instrucciones">
-
-Apunte la cámara hacia el código QR
-de la ficha.
-
-<br><br>
-
-La cámara se utiliza únicamente
-para leer códigos QR.
-
-</div>
-
-
-</div>
+  </div>
 
 </div>
 
 
 <script>
 
-
 /* ==========================================================
-   URL DE APPS SCRIPT
+   URL ACTUAL DE APPS SCRIPT
    ========================================================== */
 
-const URL_WEB_APP =
+const URL_APPS_SCRIPT =
   "https://script.google.com/macros/s/AKfycbxKpsR2pL2tULdxnfot9DM_vJOic-PshIfXVZEarIQZB_nGrabyahTHVYX3Cc8BUESM/exec";
 
 
@@ -327,37 +304,7 @@ let lector = null;
 
 let escaneando = false;
 
-let procesando = false;
-
-
-/* ==========================================================
-   ELEMENTOS
-   ========================================================== */
-
-const estado =
-  document.getElementById(
-    "estado"
-  );
-
-const reader =
-  document.getElementById(
-    "reader"
-  );
-
-const botonCamara =
-  document.getElementById(
-    "btn-camara"
-  );
-
-const botonDetener =
-  document.getElementById(
-    "btn-detener"
-  );
-
-const resultado =
-  document.getElementById(
-    "resultado"
-  );
+let procesandoQR = false;
 
 
 /* ==========================================================
@@ -369,10 +316,15 @@ function mostrarEstado(
   error = false
 ) {
 
-  estado.textContent =
+  const elemento =
+    document.getElementById(
+      "estado"
+    );
+
+  elemento.textContent =
     mensaje;
 
-  estado.classList.toggle(
+  elemento.classList.toggle(
     "error",
     error
   );
@@ -381,66 +333,17 @@ function mostrarEstado(
 
 
 /* ==========================================================
-   NORMALIZAR QR
-   ==========================================================
-
-   Ejemplos:
-
-   SIAFI-21026 → 21026
-
-   SIAFI 21026 → 21026
-
-   21026 → 21026
-
-   Solo se enviarán números a Apps Script.
-   ========================================================== */
-
-function normalizarFicha(
-  texto
-) {
-
-  if (
-    texto === null ||
-    texto === undefined
-  ) {
-
-    return "";
-
-  }
-
-
-  let valor =
-    String(texto)
-      .trim()
-      .toUpperCase();
-
-
-  valor =
-    valor.replace(
-      /^SIAFI[-\s:]*/i,
-      ""
-    );
-
-
-  valor =
-    valor.replace(
-      /\D/g,
-      ""
-    );
-
-
-  return valor;
-
-}
-
-
-/* ==========================================================
-   MOSTRAR RESULTADO
+   RESULTADO
    ========================================================== */
 
 function mostrarResultado(
   texto
 ) {
+
+  const resultado =
+    document.getElementById(
+      "resultado"
+    );
 
   resultado.textContent =
     "✅ QR detectado: " +
@@ -461,26 +364,32 @@ async function iniciarCamara() {
   if (escaneando)
     return;
 
+  procesandoQR = false;
 
-  procesando =
-    false;
+  const reader =
+    document.getElementById(
+      "reader"
+    );
 
+  const boton =
+    document.getElementById(
+      "btn-camara"
+    );
 
-  resultado.style.display =
-    "none";
-
+  const detener =
+    document.getElementById(
+      "btn-detener"
+    );
 
   mostrarEstado(
     "🎥 Solicitando permiso para usar la cámara..."
   );
 
-
   try {
 
-
     /*
-     * Comprobamos que el navegador
-     * tenga acceso a cámara.
+     * Comprobar que el navegador
+     * tenga acceso a getUserMedia.
      */
 
     if (
@@ -489,66 +398,51 @@ async function iniciarCamara() {
     ) {
 
       throw new Error(
-        "CAMERA_NOT_SUPPORTED"
+        "CAMARA_NO_DISPONIBLE"
       );
 
     }
 
 
     /*
-     * Primero solicitamos permiso.
-     *
-     * Esto es importante especialmente
-     * en teléfonos.
+     * Pedimos permiso explícitamente.
      */
 
     const stream =
-      await navigator
-        .mediaDevices
+      await navigator.mediaDevices
         .getUserMedia({
 
           video: {
-
-            facingMode:
-              {
-                ideal:
-                  "environment"
-              }
-
+            facingMode: {
+              ideal: "environment"
+            }
           },
 
-          audio:false
+          audio: false
 
         });
 
 
     /*
      * Cerramos esta prueba.
-     *
-     * html5-qrcode abrirá después
-     * la cámara correctamente.
+     * html5-qrcode abrirá la cámara
+     * nuevamente para escanear.
      */
 
     stream
       .getTracks()
       .forEach(
-        function(track) {
-
-          track.stop();
-
-        }
+        track => track.stop()
       );
 
 
     reader.style.display =
       "block";
 
-
-    botonCamara.style.display =
+    boton.style.display =
       "none";
 
-
-    botonDetener.style.display =
+    detener.style.display =
       "block";
 
 
@@ -560,36 +454,33 @@ async function iniciarCamara() {
 
     const configuracion = {
 
-      fps:10,
+      fps: 10,
 
-      qrbox:function(
+      qrbox: function(
         ancho,
         alto
       ) {
 
-        const tamano =
+        const tamaño =
           Math.min(
             ancho * 0.75,
             alto * 0.75,
             300
           );
 
-
         return {
 
-          width:
-            tamano,
+          width: tamaño,
 
-          height:
-            tamano
+          height: tamaño
 
         };
 
       },
 
-      aspectRatio:1.0,
+      aspectRatio: 1.0,
 
-      disableFlip:false
+      disableFlip: false
 
     };
 
@@ -597,8 +488,9 @@ async function iniciarCamara() {
     await lector.start(
 
       {
-        facingMode:
-          "environment"
+        facingMode: {
+          ideal: "environment"
+        }
       },
 
       configuracion,
@@ -616,99 +508,32 @@ async function iniciarCamara() {
     );
 
 
-    escaneando =
-      true;
-
+    escaneando = true;
 
     mostrarEstado(
       "📷 Cámara funcionando. Apunte al código QR."
     );
 
-
   }
 
-  catch(error) {
+  catch (error) {
 
     console.error(
       "ERROR CÁMARA:",
       error
     );
 
-
     reader.style.display =
       "none";
 
-
-    botonCamara.style.display =
+    boton.style.display =
       "block";
 
-
-    botonDetener.style.display =
+    detener.style.display =
       "none";
 
-
-    let mensaje =
-      "❌ No se pudo acceder a la cámara.";
-
-
-    if (
-      error &&
-      error.name ===
-      "NotAllowedError"
-    ) {
-
-      mensaje =
-        "❌ El navegador bloqueó el acceso a la cámara. Permita la cámara para este sitio.";
-
-    }
-
-    else if (
-      error &&
-      error.name ===
-      "NotFoundError"
-    ) {
-
-      mensaje =
-        "❌ No se encontró una cámara disponible.";
-
-    }
-
-    else if (
-      error &&
-      error.name ===
-      "NotReadableError"
-    ) {
-
-      mensaje =
-        "❌ La cámara está siendo utilizada por otra aplicación.";
-
-    }
-
-    else if (
-      error &&
-      error.name ===
-      "SecurityError"
-    ) {
-
-      mensaje =
-        "❌ El navegador bloqueó la cámara por seguridad.";
-
-    }
-
-    else if (
-      error &&
-      error.message ===
-      "CAMERA_NOT_SUPPORTED"
-    ) {
-
-      mensaje =
-        "❌ Este navegador no permite utilizar la cámara desde esta página.";
-
-    }
-
-
     mostrarEstado(
-      mensaje,
+      "❌ No se pudo acceder a la cámara. Revise el permiso de cámara del navegador.",
       true
     );
 
@@ -725,29 +550,13 @@ async function detenerCamara() {
 
   try {
 
-    if (
-      lector &&
-      escaneando
-    ) {
-
-      await lector.stop();
-
-    }
-
-  }
-
-  catch(error) {
-
-    console.warn(
-      error
-    );
-
-  }
-
-
-  try {
-
     if (lector) {
+
+      if (escaneando) {
+
+        await lector.stop();
+
+      }
 
       await lector.clear();
 
@@ -755,7 +564,7 @@ async function detenerCamara() {
 
   }
 
-  catch(error) {
+  catch (error) {
 
     console.warn(
       error
@@ -763,32 +572,24 @@ async function detenerCamara() {
 
   }
 
+  lector = null;
 
-  lector =
-    null;
+  escaneando = false;
 
-  escaneando =
-    false;
-
-  procesando =
-    false;
-
-
-  reader.style.display =
+  document.getElementById(
+    "reader"
+  ).style.display =
     "none";
 
-
-  botonCamara.style.display =
+  document.getElementById(
+    "btn-camara"
+  ).style.display =
     "block";
 
-
-  botonDetener.style.display =
+  document.getElementById(
+    "btn-detener"
+  ).style.display =
     "none";
-
-
-  mostrarEstado(
-    "📷 Cámara desactivada"
-  );
 
 }
 
@@ -801,25 +602,64 @@ async function procesarQR(
   textoQR
 ) {
 
-  if (procesando)
+  if (procesandoQR)
     return;
 
-
-  const ficha =
-    normalizarFicha(
-      textoQR
-    );
+  procesandoQR = true;
 
 
-  if (!ficha) {
+  /*
+   * Convertir a texto.
+   */
+
+  let texto =
+    String(
+      textoQR || ""
+    ).trim();
+
+
+  if (!texto) {
+
+    procesandoQR = false;
 
     return;
 
   }
 
 
-  procesando =
-    true;
+  /*
+   * SOLO NÚMEROS.
+   *
+   * Ejemplo:
+   *
+   * SIAFI-21026
+   * 21026
+   * FICHA 21026
+   *
+   * terminarán como:
+   *
+   * 21026
+   */
+
+  const ficha =
+    texto.replace(
+      /\D/g,
+      ""
+    );
+
+
+  if (!ficha) {
+
+    mostrarEstado(
+      "❌ El QR no contiene un número de ficha válido.",
+      true
+    );
+
+    procesandoQR = false;
+
+    return;
+
+  }
 
 
   mostrarResultado(
@@ -828,50 +668,28 @@ async function procesarQR(
 
 
   mostrarEstado(
-    "✅ Código detectado. Abriendo ficha..."
+    "✅ Ficha " +
+    ficha +
+    " detectada. Abriendo control de bienes..."
   );
 
 
   /*
-   * Detener cámara antes de salir.
+   * DETENER CÁMARA.
    */
 
-  try {
-
-    if (
-      lector &&
-      escaneando
-    ) {
-
-      await lector.stop();
-
-    }
-
-  }
-
-  catch(error) {
-
-    console.warn(
-      error
-    );
-
-  }
+  await detenerCamara();
 
 
   /*
+   * CONSTRUIR URL.
+   *
    * IMPORTANTE:
-   *
-   * No usamos window.open.
-   *
-   * No usamos iframe.
-   *
-   * No usamos una URL intermedia.
-   *
-   * Vamos directamente a Apps Script.
+   * Esta es la única salida de GitHub.
    */
 
   const destino =
-    URL_WEB_APP +
+    URL_APPS_SCRIPT +
     "?ficha=" +
     encodeURIComponent(
       ficha
@@ -879,54 +697,21 @@ async function procesarQR(
 
 
   /*
-   * Una pequeña pausa permite
-   * cerrar correctamente la cámara
-   * antes de cambiar de página.
+   * Navegación absoluta.
    */
 
   setTimeout(
     function() {
 
-      window.location.href =
-        destino;
+      window.location.replace(
+        destino
+      );
 
     },
-    300
+    500
   );
 
 }
-
-
-/* ==========================================================
-   EVENTOS
-   ========================================================== */
-
-botonCamara.addEventListener(
-  "click",
-  iniciarCamara
-);
-
-
-botonDetener.addEventListener(
-  "click",
-  detenerCamara
-);
-
-
-/* ==========================================================
-   INICIO
-   ========================================================== */
-
-window.addEventListener(
-  "load",
-  function() {
-
-    mostrarEstado(
-      "📷 Cámara desactivada"
-    );
-
-  }
-);
 
 </script>
 
