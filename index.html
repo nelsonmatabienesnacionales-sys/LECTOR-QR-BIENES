@@ -133,6 +133,8 @@
 
       height: auto !important;
 
+      display: block;
+
     }
 
     button {
@@ -221,6 +223,14 @@
 
     }
 
+    .exito {
+
+      background: #d4edda;
+
+      color: #155724;
+
+    }
+
   </style>
 
 </head>
@@ -262,6 +272,7 @@
 
     <button
       id="btn-camara"
+      type="button"
       onclick="iniciarCamara()">
 
       📷 Activar cámara
@@ -271,6 +282,7 @@
 
     <button
       id="btn-detener"
+      type="button"
       onclick="detenerCamara()">
 
       🛑 Detener cámara
@@ -285,6 +297,14 @@
 
       Apunte la cámara hacia el código QR
       de la ficha.
+
+      <br><br>
+
+      El código debe tener un formato como:
+
+      <br>
+
+      <strong>SIAFI-12345</strong>
 
     </div>
 
@@ -305,9 +325,15 @@ const URL_WEB_APP =
   "https://script.google.com/macros/s/AKfycbzuWUxuHh6Rp1uTbgo3PYKsDXn6B2FerY_tBhVdypZzYqIdLyOvJUQtLczzQGVq9deW/exec";
 
 
+/* ==========================================================
+   VARIABLES
+   ========================================================== */
+
 let lector = null;
 
 let escaneando = false;
+
+let procesandoQR = false;
 
 let ultimoQR = "";
 
@@ -315,7 +341,7 @@ let ultimaLectura = 0;
 
 
 /* ==========================================================
-   ESTADO
+   MOSTRAR ESTADO
    ========================================================== */
 
 function mostrarEstado(
@@ -328,21 +354,27 @@ function mostrarEstado(
       "estado"
     );
 
-
   estado.textContent =
     mensaje;
 
-
-  estado.classList.toggle(
+  estado.classList.remove(
     "error",
-    error
+    "exito"
   );
+
+  if (error) {
+
+    estado.classList.add(
+      "error"
+    );
+
+  }
 
 }
 
 
 /* ==========================================================
-   RESULTADO
+   MOSTRAR RESULTADO
    ========================================================== */
 
 function mostrarResultado(
@@ -354,14 +386,126 @@ function mostrarResultado(
       "resultado"
     );
 
-
   resultado.textContent =
-    "✅ QR detectado: " +
-    texto;
-
+    "✅ QR detectado: " + texto;
 
   resultado.style.display =
     "block";
+
+}
+
+
+/* ==========================================================
+   NORMALIZAR FICHA
+   ========================================================== */
+
+function obtenerFicha(
+  textoQR
+) {
+
+  let texto =
+    String(
+      textoQR || ""
+    )
+    .trim();
+
+
+  if (!texto)
+    return "";
+
+
+  /*
+   * Si el QR contiene una URL con:
+   *
+   * ?ficha=SIAFI-123
+   *
+   * intentamos obtener automáticamente
+   * el valor de ficha.
+   */
+
+  try {
+
+    if (
+      texto.startsWith("http://") ||
+      texto.startsWith("https://")
+    ) {
+
+      const url =
+        new URL(texto);
+
+      const ficha =
+        url.searchParams.get(
+          "ficha"
+        );
+
+      if (ficha) {
+
+        texto =
+          ficha.trim();
+
+      }
+
+    }
+
+  }
+
+  catch (error) {
+
+    console.warn(
+      "No fue posible interpretar la URL del QR.",
+      error
+    );
+
+  }
+
+
+  /*
+   * Limpiar espacios.
+   */
+
+  texto =
+    texto.trim();
+
+
+  /*
+   * Convertir a mayúsculas.
+   */
+
+  texto =
+    texto.toUpperCase();
+
+
+  return texto;
+
+}
+
+
+/* ==========================================================
+   VALIDAR FICHA
+   ========================================================== */
+
+function validarFicha(
+  ficha
+) {
+
+  /*
+   * Acepta:
+   *
+   * SIAFI-123
+   * SIAFI-00123
+   * SIAFI-12345
+   *
+   * También permite espacios alrededor,
+   * que ya fueron eliminados.
+   */
+
+  const patron =
+    /^SIAFI-[A-Z0-9-]+$/i;
+
+
+  return patron.test(
+    ficha
+  );
 
 }
 
@@ -373,6 +517,10 @@ function mostrarResultado(
 async function iniciarCamara() {
 
   if (escaneando)
+    return;
+
+
+  if (procesandoQR)
     return;
 
 
@@ -401,35 +549,9 @@ async function iniciarCamara() {
 
   try {
 
-
-    const stream =
-      await navigator
-        .mediaDevices
-        .getUserMedia({
-
-          video: {
-
-            facingMode: {
-
-              ideal:
-                "environment"
-
-            }
-
-          },
-
-          audio: false
-
-        });
-
-
-    stream
-      .getTracks()
-      .forEach(
-        track =>
-          track.stop()
-      );
-
+    /*
+     * Mostrar lector.
+     */
 
     reader.style.display =
       "block";
@@ -442,6 +564,10 @@ async function iniciarCamara() {
     detener.style.display =
       "block";
 
+
+    /*
+     * Crear lector.
+     */
 
     lector =
       new Html5Qrcode(
@@ -485,6 +611,16 @@ async function iniciarCamara() {
     };
 
 
+    /*
+     * IMPORTANTE:
+     *
+     * Html5Qrcode solicita directamente
+     * el acceso a la cámara.
+     *
+     * Ya no hacemos getUserMedia()
+     * antes de esto.
+     */
+
     await lector.start(
 
       {
@@ -502,7 +638,17 @@ async function iniciarCamara() {
 
       },
 
-      function() {}
+      function(errorMessage) {
+
+        /*
+         * Los errores de lectura continua
+         * son normales mientras busca el QR.
+         *
+         * No mostramos error en pantalla
+         * para no molestar al usuario.
+         */
+
+      }
 
     );
 
@@ -544,12 +690,21 @@ async function iniciarCamara() {
 
     if (
       error &&
-      error.name ===
-        "NotAllowedError"
+      (
+        error.name ===
+          "NotAllowedError" ||
+
+        error.message &&
+        error.message
+          .toLowerCase()
+          .includes(
+            "permission"
+          )
+      )
     ) {
 
       mensaje =
-        "❌ El navegador bloqueó el acceso a la cámara.";
+        "❌ El navegador bloqueó el acceso a la cámara. Verifique los permisos del sitio.";
 
     }
 
@@ -586,6 +741,17 @@ async function iniciarCamara() {
 
     }
 
+    else if (
+      error &&
+      error.message
+    ) {
+
+      mensaje =
+        "❌ " +
+        error.message;
+
+    }
+
 
     mostrarEstado(
       mensaje,
@@ -614,6 +780,19 @@ async function detenerCamara() {
 
     }
 
+  }
+
+  catch (error) {
+
+    console.warn(
+      "Error al detener cámara:",
+      error
+    );
+
+  }
+
+
+  try {
 
     if (lector) {
 
@@ -626,6 +805,7 @@ async function detenerCamara() {
   catch (error) {
 
     console.warn(
+      "Error al limpiar lector:",
       error
     );
 
@@ -657,11 +837,6 @@ async function detenerCamara() {
   ).style.display =
     "none";
 
-
-  mostrarEstado(
-    "📷 Cámara desactivada"
-  );
-
 }
 
 
@@ -669,26 +844,34 @@ async function detenerCamara() {
    PROCESAR QR
    ========================================================== */
 
-function procesarQR(
+async function procesarQR(
   textoQR
 ) {
+
+  if (procesandoQR)
+    return;
+
 
   const ahora =
     Date.now();
 
 
-  const texto =
+  const textoOriginal =
     String(
       textoQR || ""
     ).trim();
 
 
-  if (!texto)
+  if (!textoOriginal)
     return;
 
 
+  /*
+   * Evitar lecturas repetidas.
+   */
+
   if (
-    texto === ultimoQR &&
+    textoOriginal === ultimoQR &&
     ahora - ultimaLectura < 3000
   ) {
 
@@ -698,28 +881,74 @@ function procesarQR(
 
 
   ultimoQR =
-    texto;
+    textoOriginal;
 
 
   ultimaLectura =
     ahora;
 
 
+  /*
+   * Obtener ficha.
+   */
+
+  const ficha =
+    obtenerFicha(
+      textoOriginal
+    );
+
+
+  /*
+   * Validar que sea una ficha SIAFI.
+   */
+
+  if (
+    !validarFicha(
+      ficha
+    )
+  ) {
+
+    mostrarResultado(
+      textoOriginal
+    );
+
+
+    mostrarEstado(
+      "⚠️ El código QR no contiene una ficha SIAFI válida.",
+      true
+    );
+
+
+    return;
+
+  }
+
+
+  procesandoQR =
+    true;
+
+
   mostrarResultado(
-    texto
+    ficha
   );
 
 
   mostrarEstado(
-    "✅ Código detectado. Regresando a Control de Bienes..."
+    "✅ Ficha detectada: " +
+    ficha +
+    " | Abriendo ficha..."
   );
 
 
-  detenerCamara();
+  /*
+   * Detener cámara.
+   */
+
+  await detenerCamara();
 
 
   /*
-   * Enviar la ficha a tu Web App.
+   * Construir URL.
    */
 
   const separador =
@@ -733,9 +962,14 @@ function procesarQR(
     separador +
     "ficha=" +
     encodeURIComponent(
-      texto
+      ficha
     );
 
+
+  /*
+   * Pequeña pausa para permitir
+   * que la cámara se cierre.
+   */
 
   setTimeout(
     function() {
@@ -744,10 +978,35 @@ function procesarQR(
         destino;
 
     },
-    700
+    500
   );
 
 }
+
+
+/* ==========================================================
+   LIMPIEZA AL SALIR
+   ========================================================== */
+
+window.addEventListener(
+  "beforeunload",
+  function() {
+
+    if (
+      lector &&
+      escaneando
+    ) {
+
+      lector
+        .stop()
+        .catch(
+          function() {}
+        );
+
+    }
+
+  }
+);
 
 
 </script>
