@@ -1,164 +1,780 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prueba Cámara QR</title>
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0">
+
+<title>Lector QR - Bienes</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <style>
+
+* {
+  box-sizing: border-box;
+}
+
 body {
+
   margin: 0;
-  padding: 20px;
+  padding: 15px;
+
+  min-height: 100vh;
+
   font-family: Arial, sans-serif;
-  background: #667eea;
+
+  background:
+    linear-gradient(
+      135deg,
+      #667eea,
+      #764ba2
+    );
+
 }
 
 .contenedor {
+
   max-width: 500px;
-  margin: auto;
+
+  margin: 0 auto;
+
   background: white;
-  padding: 20px;
+
   border-radius: 15px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 25px
+    rgba(0,0,0,.20);
+
 }
 
-h1 {
+.encabezado {
+
+  background: #4CAF50;
+
+  color: white;
+
   text-align: center;
+
+  padding: 22px 15px;
+
 }
 
-#estado {
-  padding: 15px;
+.encabezado h1 {
+
+  margin: 0 0 5px;
+
+  font-size: 23px;
+
+}
+
+.encabezado p {
+
+  margin: 0;
+
+  font-size: 14px;
+
+}
+
+.contenido {
+
+  padding: 20px;
+
+}
+
+.estado {
+
+  text-align: center;
+
+  padding: 12px;
+
   margin-bottom: 15px;
-  background: #eee;
+
   border-radius: 10px;
-  text-align: center;
+
+  background: #f1f3f5;
+
+  color: #555;
+
   font-weight: bold;
+
 }
 
 #reader {
+
   width: 100%;
+
+  max-width: 400px;
+
+  margin: 0 auto 20px;
+
   display: none;
+
+  border-radius: 12px;
+
+  overflow: hidden;
+
+  background: #000;
+
+}
+
+#reader video {
+
+  width: 100% !important;
+
+  height: auto !important;
+
 }
 
 button {
+
   width: 100%;
+
   padding: 15px;
+
+  margin-bottom: 10px;
+
   border: none;
+
   border-radius: 10px;
-  background: #4CAF50;
-  color: white;
-  font-size: 17px;
+
+  font-size: 16px;
+
   font-weight: bold;
+
+  cursor: pointer;
+
+}
+
+#btn-camara {
+
+  background: #4CAF50;
+
+  color: white;
+
+}
+
+#btn-detener {
+
+  background: #dc3545;
+
+  color: white;
+
+  display: none;
+
 }
 
 #resultado {
+
+  display: none;
+
   margin-top: 15px;
+
   padding: 15px;
-  background: #d4edda;
+
   border-radius: 10px;
+
   text-align: center;
+
+  background: #d4edda;
+
+  color: #155724;
+
   font-weight: bold;
+
+  word-break: break-word;
+
 }
+
+.instrucciones {
+
+  margin-top: 15px;
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  background: #e3f2fd;
+
+  color: #1565c0;
+
+  font-size: 13px;
+
+  text-align: center;
+
+}
+
+.error {
+
+  background: #f8d7da;
+
+  color: #721c24;
+
+}
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="contenedor">
 
-<h1>📷 PRUEBA DE CÁMARA</h1>
 
-<div id="estado">
-📷 Cámara desactivada
+<div class="encabezado">
+
+<h1>
+📷 LECTOR QR
+</h1>
+
+<p>
+Control de Bienes
+</p>
+
 </div>
+
+
+<div class="contenido">
+
+
+<div
+  id="estado"
+  class="estado">
+
+📷 Cámara desactivada
+
+</div>
+
 
 <div id="reader"></div>
 
-<button onclick="activarCamara()">
+
+<button
+  id="btn-camara"
+  onclick="iniciarCamara()">
+
 📷 ACTIVAR CÁMARA
+
 </button>
+
+
+<button
+  id="btn-detener"
+  onclick="detenerCamara()">
+
+🛑 DETENER CÁMARA
+
+</button>
+
 
 <div id="resultado"></div>
 
+
+<div class="instrucciones">
+
+Apunte la cámara hacia el código QR
+de la ficha.
+
+<br><br>
+
+El sistema utilizará únicamente
+<strong>el número de la ficha</strong>.
+
 </div>
+
+
+</div>
+
+</div>
+
 
 <script>
 
-let scanner = null;
 
-async function activarCamara() {
+/* ==========================================================
+   URL DE TU NUEVA WEB APP DE APPS SCRIPT
+   ========================================================== */
+
+const URL_WEB_APP =
+"https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
+
+
+/* ==========================================================
+   VARIABLES
+   ========================================================== */
+
+let lector = null;
+
+let escaneando = false;
+
+let procesandoQR = false;
+
+let ultimoQR = "";
+
+let ultimaLectura = 0;
+
+
+/* ==========================================================
+   MOSTRAR ESTADO
+   ========================================================== */
+
+function mostrarEstado(
+  mensaje,
+  error = false
+) {
 
   const estado =
-    document.getElementById("estado");
-
-  const reader =
-    document.getElementById("reader");
+    document.getElementById(
+      "estado"
+    );
 
   estado.textContent =
-    "🎥 Abriendo cámara...";
+    mensaje;
 
-  reader.style.display =
+  estado.classList.toggle(
+    "error",
+    error
+  );
+
+}
+
+
+/* ==========================================================
+   MOSTRAR RESULTADO
+   ========================================================== */
+
+function mostrarResultado(
+  texto
+) {
+
+  const resultado =
+    document.getElementById(
+      "resultado"
+    );
+
+  resultado.textContent =
+    "✅ QR detectado: " +
+    texto;
+
+  resultado.style.display =
     "block";
+
+}
+
+
+/* ==========================================================
+   INICIAR CÁMARA
+   ========================================================== */
+
+async function iniciarCamara() {
+
+  if (escaneando) {
+    return;
+  }
+
+  const reader =
+    document.getElementById(
+      "reader"
+    );
+
+  const botonCamara =
+    document.getElementById(
+      "btn-camara"
+    );
+
+  const botonDetener =
+    document.getElementById(
+      "btn-detener"
+    );
+
+
+  mostrarEstado(
+    "🎥 Abriendo cámara..."
+  );
+
 
   try {
 
-    scanner =
-      new Html5Qrcode("reader");
+    reader.style.display =
+      "block";
 
-    await scanner.start(
+    botonCamara.style.display =
+      "none";
+
+    botonDetener.style.display =
+      "block";
+
+
+    lector =
+      new Html5Qrcode(
+        "reader"
+      );
+
+
+    const configuracion = {
+
+      fps: 10,
+
+      qrbox: {
+
+        width: 250,
+
+        height: 250
+
+      },
+
+      aspectRatio: 1.0,
+
+      disableFlip: false
+
+    };
+
+
+    await lector.start(
 
       {
         facingMode: "environment"
       },
 
-      {
-        fps: 10,
+      configuracion,
 
-        qrbox: {
-          width: 250,
-          height: 250
-        }
+      function(textoQR) {
 
-      },
+        /*
+         * AQUÍ SE PROCESA EL QR
+         */
 
-      function(texto) {
-
-        document.getElementById(
-          "resultado"
-        ).textContent =
-          "✅ QR DETECTADO: " + texto;
+        procesarQR(
+          textoQR
+        );
 
       },
 
-      function(error) {
+      function(errorMessage) {
 
-        // Ignorar errores normales
-        // mientras busca el QR
+        /*
+         * No hacemos nada con los errores
+         * normales mientras busca el QR.
+         */
 
       }
 
     );
 
-    estado.textContent =
-      "📷 CÁMARA FUNCIONANDO";
+
+    escaneando =
+      true;
+
+
+    mostrarEstado(
+      "📷 CÁMARA FUNCIONANDO - Apunte al QR"
+    );
+
 
   }
 
   catch(error) {
 
-    console.error(error);
+    console.error(
+      "ERROR:",
+      error
+    );
 
-    estado.textContent =
-      "❌ ERROR: " +
-      (error.message || error);
+
+    reader.style.display =
+      "none";
+
+    botonCamara.style.display =
+      "block";
+
+    botonDetener.style.display =
+      "none";
+
+
+    mostrarEstado(
+
+      "❌ No se pudo acceder a la cámara: " +
+      (
+        error.message ||
+        error
+      ),
+
+      true
+
+    );
 
   }
 
 }
 
+
+/* ==========================================================
+   DETENER CÁMARA
+   ========================================================== */
+
+async function detenerCamara() {
+
+  try {
+
+    if (lector) {
+
+      if (escaneando) {
+
+        await lector.stop();
+
+      }
+
+      await lector.clear();
+
+    }
+
+  }
+
+  catch(error) {
+
+    console.warn(
+      "Error al detener cámara:",
+      error
+    );
+
+  }
+
+
+  lector =
+    null;
+
+  escaneando =
+    false;
+
+
+  document.getElementById(
+    "reader"
+  ).style.display =
+    "none";
+
+
+  document.getElementById(
+    "btn-camara"
+  ).style.display =
+    "block";
+
+
+  document.getElementById(
+    "btn-detener"
+  ).style.display =
+    "none";
+
+}
+
+
+/* ==========================================================
+   PROCESAR QR
+   ========================================================== */
+
+function procesarQR(
+  textoQR
+) {
+
+  /*
+   * Evitar que el mismo QR se procese
+   * muchas veces.
+   */
+
+  if (procesandoQR) {
+
+    return;
+
+  }
+
+
+  const ahora =
+    Date.now();
+
+
+  const texto =
+    String(
+      textoQR || ""
+    ).trim();
+
+
+  if (!texto) {
+
+    return;
+
+  }
+
+
+  if (
+
+    texto === ultimoQR &&
+
+    ahora -
+    ultimaLectura <
+    3000
+
+  ) {
+
+    return;
+
+  }
+
+
+  ultimoQR =
+    texto;
+
+  ultimaLectura =
+    ahora;
+
+
+  /*
+   * ========================================================
+   * EXTRAER ÚNICAMENTE LOS NÚMEROS
+   * ========================================================
+   *
+   * Ejemplo:
+   *
+   * SIAFI-21026
+   *
+   * resultado:
+   *
+   * 21026
+   *
+   */
+
+  const ficha =
+    texto.replace(
+      /\D/g,
+      ""
+    );
+
+
+  if (!ficha) {
+
+    mostrarEstado(
+      "❌ El QR no contiene un número de ficha válido.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  /*
+   * Marcar como procesando
+   */
+
+  procesandoQR =
+    true;
+
+
+  /*
+   * Mostrar lo que detectamos
+   */
+
+  mostrarResultado(
+    ficha
+  );
+
+
+  mostrarEstado(
+    "✅ Ficha " +
+    ficha +
+    " detectada..."
+  );
+
+
+  /*
+   * ========================================================
+   * CREAR URL PARA APPS SCRIPT
+   * ========================================================
+   */
+
+  const destino =
+    URL_WEB_APP +
+    "?ficha=" +
+    encodeURIComponent(
+      ficha
+    );
+
+
+  console.log(
+    "QR ORIGINAL:",
+    texto
+  );
+
+  console.log(
+    "FICHA:",
+    ficha
+  );
+
+  console.log(
+    "DESTINO:",
+    destino
+  );
+
+
+  /*
+   * ========================================================
+   * DETENER CÁMARA
+   * ========================================================
+   */
+
+  detenerCamara();
+
+
+  /*
+   * ========================================================
+   * REDIRECCIONAR
+   * ========================================================
+   */
+
+  mostrarEstado(
+    "➡️ Abriendo Control de Bienes..."
+  );
+
+
+  setTimeout(
+    function() {
+
+      window.location.assign(
+        destino
+      );
+
+    },
+    1000
+  );
+
+}
+
+
+/* ==========================================================
+   INICIO
+   ========================================================== */
+
+window.addEventListener(
+  "load",
+  function() {
+
+    mostrarEstado(
+      "📷 Cámara desactivada"
+    );
+
+  }
+);
+
 </script>
 
+
 </body>
+
 </html>
