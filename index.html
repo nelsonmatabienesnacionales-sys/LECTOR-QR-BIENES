@@ -22,7 +22,6 @@
 body {
 
   margin: 0;
-
   padding: 15px;
 
   min-height: 100vh;
@@ -44,7 +43,6 @@ body {
 .contenedor {
 
   width: 100%;
-
   max-width: 500px;
 
   margin: 0 auto;
@@ -57,7 +55,7 @@ body {
 
   box-shadow:
     0 5px 25px
-    rgba(0,0,0,0.20);
+    rgba(0,0,0,.20);
 
 }
 
@@ -282,9 +280,7 @@ Control de Bienes
 </button>
 
 
-<div
-  id="resultado">
-</div>
+<div id="resultado"></div>
 
 
 <div class="instrucciones">
@@ -309,11 +305,11 @@ El sistema utilizará únicamente
 
 
 /* ==========================================================
-   URL DE LA NUEVA WEB APP DE APPS SCRIPT
+   APPS SCRIPT
    ========================================================== */
 
 const URL_WEB_APP =
-  "https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
+"https://script.google.com/macros/s/AKfycbztL-8x63-sLW_uObjEHJSI6ekCHfRHOAUZDGRGOAHrhSwzWKe8zjt1ZRvLsPc4ccSj/exec";
 
 
 /* ==========================================================
@@ -330,7 +326,7 @@ let ultimaLectura = 0;
 
 
 /* ==========================================================
-   MOSTRAR ESTADO
+   ESTADO
    ========================================================== */
 
 function mostrarEstado(
@@ -338,15 +334,15 @@ function mostrarEstado(
   error = false
 ) {
 
-  const estado =
+  const elemento =
     document.getElementById(
       "estado"
     );
 
-  estado.textContent =
+  elemento.textContent =
     mensaje;
 
-  estado.classList.toggle(
+  elemento.classList.toggle(
     "error",
     error
   );
@@ -355,23 +351,23 @@ function mostrarEstado(
 
 
 /* ==========================================================
-   MOSTRAR RESULTADO
+   RESULTADO
    ========================================================== */
 
 function mostrarResultado(
   texto
 ) {
 
-  const resultado =
+  const elemento =
     document.getElementById(
       "resultado"
     );
 
-  resultado.textContent =
+  elemento.textContent =
     "✅ Ficha detectada: " +
     texto;
 
-  resultado.style.display =
+  elemento.style.display =
     "block";
 
 }
@@ -387,18 +383,15 @@ async function iniciarCamara() {
     return;
   }
 
-
   const reader =
     document.getElementById(
       "reader"
     );
 
-
   const botonCamara =
     document.getElementById(
       "btn-camara"
     );
-
 
   const botonDetener =
     document.getElementById(
@@ -407,62 +400,35 @@ async function iniciarCamara() {
 
 
   mostrarEstado(
-    "🎥 Solicitando permiso para usar la cámara..."
+    "🎥 Abriendo cámara..."
   );
 
 
   try {
 
-    /*
-     * Primero comprobamos el permiso.
-     */
-
-    const stream =
-      await navigator.mediaDevices.getUserMedia({
-
-        video: {
-
-          facingMode: {
-            ideal: "environment"
-          }
-
-        },
-
-        audio: false
-
-      });
-
-
-    /*
-     * Cerramos esta prueba.
-     * Html5Qrcode abrirá la cámara
-     * inmediatamente después.
-     */
-
-    stream
-      .getTracks()
-      .forEach(
-        track => track.stop()
-      );
-
-
     reader.style.display =
       "block";
-
 
     botonCamara.style.display =
       "none";
 
-
     botonDetener.style.display =
       "block";
 
+
+    /*
+     * Creamos el lector
+     */
 
     lector =
       new Html5Qrcode(
         "reader"
       );
 
+
+    /*
+     * Configuración QR
+     */
 
     const configuracion = {
 
@@ -480,7 +446,6 @@ async function iniciarCamara() {
               alto * 0.75,
               300
             );
-
 
           return {
 
@@ -501,12 +466,17 @@ async function iniciarCamara() {
     };
 
 
+    /*
+     * IMPORTANTE:
+     *
+     * Html5Qrcode solicita directamente
+     * el permiso de cámara.
+     */
+
     await lector.start(
 
       {
-        facingMode: {
-          ideal: "environment"
-        }
+        facingMode: "environment"
       },
 
       configuracion,
@@ -519,11 +489,11 @@ async function iniciarCamara() {
 
       },
 
-      function() {
+      function(errorMessage) {
 
         /*
-         * Ignoramos los errores normales
-         * mientras está buscando.
+         * No mostramos los errores
+         * normales de búsqueda.
          */
 
       }
@@ -545,7 +515,7 @@ async function iniciarCamara() {
   catch (error) {
 
     console.error(
-      "ERROR DE CÁMARA:",
+      "ERROR COMPLETO:",
       error
     );
 
@@ -553,10 +523,8 @@ async function iniciarCamara() {
     reader.style.display =
       "none";
 
-
     botonCamara.style.display =
       "block";
-
 
     botonDetener.style.display =
       "none";
@@ -573,7 +541,7 @@ async function iniciarCamara() {
     ) {
 
       mensaje =
-        "❌ El navegador bloqueó el acceso a la cámara. Permita la cámara para este sitio.";
+      "❌ El navegador bloqueó la cámara. Debe permitir el acceso a la cámara para GitHub.";
 
     }
 
@@ -584,7 +552,7 @@ async function iniciarCamara() {
     ) {
 
       mensaje =
-        "❌ No se encontró una cámara disponible.";
+      "❌ No se encontró ninguna cámara.";
 
     }
 
@@ -595,7 +563,18 @@ async function iniciarCamara() {
     ) {
 
       mensaje =
-        "❌ La cámara está siendo utilizada por otra aplicación.";
+      "❌ La cámara está siendo utilizada por otra aplicación.";
+
+    }
+
+    else if (
+      error &&
+      error.name ===
+      "OverconstrainedError"
+    ) {
+
+      mensaje =
+      "❌ La cámara del dispositivo no es compatible con esta configuración.";
 
     }
 
@@ -606,7 +585,7 @@ async function iniciarCamara() {
     ) {
 
       mensaje =
-        "❌ El navegador bloqueó el acceso por seguridad.";
+      "❌ El navegador bloqueó el acceso a la cámara por seguridad.";
 
     }
 
@@ -629,17 +608,13 @@ async function detenerCamara() {
 
   try {
 
-    if (
-      lector &&
-      escaneando
-    ) {
-
-      await lector.stop();
-
-    }
-
-
     if (lector) {
+
+      if (escaneando) {
+
+        await lector.stop();
+
+      }
 
       await lector.clear();
 
@@ -650,7 +625,7 @@ async function detenerCamara() {
   catch (error) {
 
     console.warn(
-      "Error al detener cámara:",
+      "Error al detener:",
       error
     );
 
@@ -659,7 +634,6 @@ async function detenerCamara() {
 
   lector =
     null;
-
 
   escaneando =
     false;
@@ -691,7 +665,7 @@ async function detenerCamara() {
 
 
 /* ==========================================================
-   PROCESAR CÓDIGO QR
+   PROCESAR QR
    ========================================================== */
 
 function procesarQR(
@@ -705,8 +679,7 @@ function procesarQR(
   const texto =
     String(
       textoQR || ""
-    )
-    .trim();
+    ).trim();
 
 
   if (!texto) {
@@ -715,7 +688,7 @@ function procesarQR(
 
 
   /*
-   * Evitar lecturas duplicadas
+   * Evitar lecturas repetidas
    */
 
   if (
@@ -736,24 +709,20 @@ function procesarQR(
   ultimoQR =
     texto;
 
-
   ultimaLectura =
     ahora;
 
 
   /*
    * ========================================================
-   * EXTRAER SOLAMENTE LOS NÚMEROS
+   * EXTRAER SOLO NÚMEROS
    * ========================================================
-   *
-   * Ejemplo:
    *
    * SIAFI-21026
    *
-   * se convierte en:
+   * queda:
    *
    * 21026
-   *
    */
 
   const ficha =
@@ -766,7 +735,7 @@ function procesarQR(
   if (!ficha) {
 
     mostrarEstado(
-      "❌ El QR no contiene un número de ficha válido.",
+      "❌ El QR no contiene un número válido.",
       true
     );
 
@@ -783,31 +752,19 @@ function procesarQR(
   mostrarEstado(
     "✅ Ficha " +
     ficha +
-    " detectada. Abriendo Control de Bienes..."
+    " detectada. Abriendo sistema..."
   );
 
 
   /*
-   * Detener cámara antes de salir.
+   * Detener cámara
    */
 
   detenerCamara();
 
 
   /*
-   * ========================================================
-   * CREAR URL DE APPS SCRIPT
-   * ========================================================
-   *
-   * IMPORTANTE:
-   *
-   * Aquí es donde GitHub manda la ficha
-   * al Apps Script.
-   *
-   * Ejemplo:
-   *
-   * ?ficha=21026
-   *
+   * Crear URL de Apps Script
    */
 
   const destino =
@@ -819,8 +776,7 @@ function procesarQR(
 
 
   /*
-   * Esperamos un momento para que
-   * la cámara se cierre correctamente.
+   * Ir a Apps Script
    */
 
   setTimeout(
@@ -830,39 +786,19 @@ function procesarQR(
         destino;
 
     },
-    500
+    700
   );
 
 }
 
 
 /* ==========================================================
-   EVITAR ERROR SI EL NAVEGADOR NO SOPORTA CÁMARA
+   INICIO
    ========================================================== */
 
 window.addEventListener(
   "load",
   function() {
-
-    if (
-      !navigator.mediaDevices ||
-      !navigator.mediaDevices.getUserMedia
-    ) {
-
-      mostrarEstado(
-        "❌ Este navegador no permite acceder a la cámara.",
-        true
-      );
-
-      document.getElementById(
-        "btn-camara"
-      ).disabled =
-        true;
-
-      return;
-
-    }
-
 
     mostrarEstado(
       "📷 Cámara desactivada. Pulse ACTIVAR CÁMARA."
